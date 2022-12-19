@@ -30,8 +30,13 @@ public class Player : MonoBehaviour
 
     private void Movement()
     {
-        transform.Translate(new Vector3 (_movement.x, _movement.y, 0) * Time.deltaTime * _speed);
+        PlayerBounds();
 
+        transform.Translate(new Vector3 (_movement.x, _movement.y, 0) * Time.deltaTime * _speed);    
+    }
+
+    private void PlayerBounds()
+    {
         if (transform.position.x >= 11.25f)
         {
             transform.position = new Vector3(11.25f, transform.position.y, 0);
