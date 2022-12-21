@@ -4,9 +4,22 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [Header("Associated Scripts")]
+    [SerializeField]
+    private Player _player;
 
+    [Header("Enemy Attributes")]
     [SerializeField]
     private float _speed = 4.0f;
+    [SerializeField]
+    private Transform _playerTarget;
+    [SerializeField]
+    private float _rotationSpeed;
+
+    //Values for internal use
+    private Quaternion _lookRotation;
+    private Vector3 _direction;
+
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +31,7 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         Movement();
+        RotateToPlayer();
         Respawn();
     }
 
@@ -25,8 +39,21 @@ public class Enemy : MonoBehaviour
 
     private void Movement()
     {
-        transform.Translate(Vector3.down * Time.deltaTime * _speed);
+        transform.Translate(_speed * Time.deltaTime * Vector3.down);
 
+    }
+
+    private void RotateToPlayer()
+    {
+        //find the vector pointing from enemy position to the player's position
+        _direction = (_playerTarget.position - transform.position).normalized;
+
+        //create the rotation the enemy needs to be in to look at the target
+        _lookRotation = Quaternion.LookRotation(_direction);
+
+
+        //rotate the enemy over time to speed until enemy is in the required rotation
+        transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * _rotationSpeed);
     }
 
     private void Respawn()
@@ -44,6 +71,7 @@ public class Enemy : MonoBehaviour
         if(other.tag == "Player")
         {
             Destroy(this.gameObject);
+            _player.Damage();
         }
     }
 }

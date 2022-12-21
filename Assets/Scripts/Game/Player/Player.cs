@@ -4,11 +4,20 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    #region Variables
     //Variables Set By Game Inputs
     private Vector2 _movement;
 
+    //Variables Set Wihtin the Inspector
     [SerializeField]
     private float _speed;
+
+    //Variables Hard Coded
+    [SerializeField]
+    private int _lives = 3;
+    private bool _wasHit = false;
+
+    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +62,46 @@ public class Player : MonoBehaviour
         else if (transform.position.y <= -3)
         {
             transform.position = new Vector3(transform.position.x, -3, 0);
+        }
+    }
+
+    #endregion
+
+    #region Health
+
+    public void Damage()
+    {
+        if(_wasHit == false)
+        {
+            _wasHit = true;
+            _lives--;
+            StartCoroutine(HitVisual());
+        }
+    }
+
+    IEnumerator HitVisual()
+    {
+        yield return new WaitForEndOfFrame();
+        while (_wasHit == true)
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            yield return new WaitForSeconds(0.25f);
+            gameObject.GetComponent<MeshRenderer>().enabled = true;
+            yield return new WaitForSeconds(0.25f);
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            yield return new WaitForSeconds(0.25f);
+            gameObject.GetComponent<MeshRenderer>().enabled = true;
+            yield return new WaitForSeconds(0.25f);
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            yield return new WaitForSeconds(0.25f);
+            gameObject.GetComponent<MeshRenderer>().enabled = true;
+            yield return new WaitForSeconds(0.25f);
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            yield return new WaitForSeconds(0.25f);
+            gameObject.GetComponent<MeshRenderer>().enabled = true;
+            yield return new WaitForSeconds(0.25f);
+
+            _wasHit = false;
         }
     }
 
