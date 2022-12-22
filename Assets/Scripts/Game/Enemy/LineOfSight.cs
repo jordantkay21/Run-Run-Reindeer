@@ -9,12 +9,6 @@ public class LineOfSight : MonoBehaviour
 
     private bool _isAiming = true;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -26,11 +20,17 @@ public class LineOfSight : MonoBehaviour
             {
                 if (_hitInfo.transform.tag == "Player")
                 {
+                    _enemy.SetTarget(_hitInfo.transform);
                     _enemy.SetAim(false);
                     _isAiming = false;
                 }
             }
         }
+    }
+
+    public void SetAim(bool aim)
+    {
+        _isAiming = aim;
     }
 
     private void OnDrawGizmos()
