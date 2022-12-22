@@ -15,10 +15,13 @@ public class Enemy : MonoBehaviour
     private Transform _playerTarget;
     [SerializeField]
     private float _rotationSpeed;
+    [SerializeField]
+    private bool _isAiming = true;
 
     //Values for internal use
     private Quaternion _lookRotation;
     private Vector3 _direction;
+    private RaycastHit _hitInfo;
 
 
     // Start is called before the first frame update
@@ -31,8 +34,12 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         Movement();
-        RotateToPlayer();
         Respawn();
+
+        if (_isAiming == true)
+        {
+            Aim();
+        }
     }
 
     #region Movements
@@ -41,19 +48,6 @@ public class Enemy : MonoBehaviour
     {
         transform.Translate(_speed * Time.deltaTime * Vector3.down);
 
-    }
-
-    private void RotateToPlayer()
-    {
-        //find the vector pointing from enemy position to the player's position
-        _direction = (_playerTarget.position - transform.position).normalized;
-
-        //create the rotation the enemy needs to be in to look at the target
-        _lookRotation = Quaternion.LookRotation(_direction);
-
-
-        //rotate the enemy over time to speed until enemy is in the required rotation
-        transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * _rotationSpeed);
     }
 
     private void Respawn()
@@ -65,6 +59,30 @@ public class Enemy : MonoBehaviour
     }
 
     #endregion
+
+    #region Aim
+    private void Aim()
+    {
+
+        //find the vector pointing from enemy position to the player's position
+        _direction = (_playerTarget.position - transform.position).normalized;
+
+        //create the rotation the enemy needs to be in to look at the target
+        _lookRotation = Quaternion.LookRotation(_direction);
+
+
+        //rotate the enemy over time to speed until enemy is in the required rotation
+        transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * _rotationSpeed);
+    
+    }
+
+    public void SetAim(bool aim)
+    {
+        Debug.Log("aim is set it: " + aim);
+        _isAiming = aim; ;
+    }
+
+    #endregion 
 
     private void OnTriggerEnter(Collider other)
     {
