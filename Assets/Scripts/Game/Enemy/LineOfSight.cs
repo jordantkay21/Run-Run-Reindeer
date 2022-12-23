@@ -4,20 +4,24 @@ using UnityEngine;
 
 public class LineOfSight : MonoBehaviour
 {
-    [SerializeField]
     private Enemy _enemy;
 
     private bool _isAiming = true;
 
+    private void Start()
+    {
+            _enemy = GetComponentInParent<Enemy>();
+    }
+
     // Update is called once per frame
     void Update()
     {
-        RaycastHit _hitInfo;
-        if (Physics.Raycast(transform.position, transform.forward, out _hitInfo, 10))
+        RaycastHit hitInfo;
+        if (Physics.Raycast(transform.position, transform.forward, out hitInfo, 10))
         {
-            if (_hitInfo.transform.tag == "Player")
+            if (hitInfo.transform.tag == "Player")
             {
-                _enemy.SetTarget(_hitInfo.transform);
+                _enemy.SetTarget(hitInfo.transform);
                 _enemy.PlayerSpotted(true);
             }
         }

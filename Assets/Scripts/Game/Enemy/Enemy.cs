@@ -5,20 +5,16 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [Header("Associated Scripts")]
-    [SerializeField]
     private Player _player;
-    [SerializeField]
+    private Transform _playerTarget;
     private LineOfSight _lineOfSight;
-    [SerializeField]
-    private Dart _dart;
+
 
     [Header("Enemy Attributes")]
     [SerializeField]
     private float _reloadTime = 2;
     [SerializeField]
     private float _speed = 4.0f;
-    [SerializeField]
-    private Transform _playerTarget;
     [SerializeField]
     private float _rotationSpeed;
     [SerializeField]
@@ -40,7 +36,9 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+            _player = GameObject.Find("Player").GetComponent<Player>();
+            _playerTarget = GameObject.Find("Player").GetComponent<Transform>();
+            _lineOfSight = GetComponentInChildren<LineOfSight>();  
     }
 
     // Update is called once per frame
@@ -59,8 +57,7 @@ public class Enemy : MonoBehaviour
 
     private void Movement()
     {
-        transform.Translate(_speed * Time.deltaTime * Vector3.down);
-
+        transform.Translate(Vector3.down * _speed * Time.deltaTime, Space.World);
     }
 
     private void Respawn()
