@@ -14,26 +14,27 @@ public class Enemy : MonoBehaviour
 
     [Header("Enemy Attributes")]
     [SerializeField]
+    private float _reloadTime = 2;
+    [SerializeField]
     private float _speed = 4.0f;
-    [SerializeField]
-    private float _fireRate;
-    [SerializeField]
-    private float _canFire;
     [SerializeField]
     private Transform _playerTarget;
     [SerializeField]
     private float _rotationSpeed;
     [SerializeField]
-    private bool _isAiming = true;
+    private bool _playerSpotted = false;
     [SerializeField]
     private GameObject _dartPrefab;
     [SerializeField]
     private bool _stopFire = false;
+    [SerializeField]
+    private float _fireRate;
 
     //Values for internal use
     private Quaternion _lookRotation;
     private Vector3 _direction;
     private Transform _target;
+    private float _canfire;
 
 
     // Start is called before the first frame update
@@ -47,12 +48,8 @@ public class Enemy : MonoBehaviour
     {
         Movement();
         Respawn();
-
-        if (_isAiming == true)
-        {
-            Aim();
-        }
-        else
+        Aim();
+        if (_playerSpotted == true)
         {
             FireDart();
         }
@@ -92,25 +89,22 @@ public class Enemy : MonoBehaviour
     
     }
 
-    public void SetAim(bool aim)
+    public void PlayerSpotted(bool playerSpotted)
     {
-        _isAiming = aim; ;
+        _playerSpotted = playerSpotted;
     }
-
     #endregion
 
     #region Firing
     private void FireDart()
     {
-        StartCoroutine(FireDartRoutine());
-        new WaitForSeconds(1f);
-        if (Time.time > _canFire && _stopFire == false)
+        if (Time.time > _canfire)
         {
-            _fireRate = .2f;
-            _canFire = Time.time + _fireRate;
+            _canfire = Time.time + _fireRate;
             GameObject dart = Instantiate(_dartPrefab, transform.position, Quaternion.identity);
             dart.GetComponent<Dart>().SetPlayerPos(_target);
         }
+        _playerSpotted = false; 
     }
 
     public void SetTarget(Transform pos)
@@ -118,18 +112,6 @@ public class Enemy : MonoBehaviour
         _target = pos;
     }
 
-    IEnumerator FireDartRoutine()
-    {
-        yield return new WaitForEndOfFrame();
-        while (_isAiming == false)
-        {
-            this.gameObject.GetComponent<Renderer>().material.color = Color.red;
-            yield return new WaitForSeconds(1f);
-            this.gameObject.GetComponent<Renderer>().material.color = Color.blue;
-            _lineOfSight.SetAim(true);
-            _isAiming = true;
-        }
-    }
 
     #endregion
 

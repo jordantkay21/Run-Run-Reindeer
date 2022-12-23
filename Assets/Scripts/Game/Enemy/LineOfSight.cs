@@ -12,18 +12,13 @@ public class LineOfSight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         RaycastHit _hitInfo;
-        if (_isAiming == true)
+        if (Physics.Raycast(transform.position, transform.forward, out _hitInfo, 10))
         {
-            if (Physics.Raycast(transform.position, transform.forward, out _hitInfo, 10))
+            if (_hitInfo.transform.tag == "Player")
             {
-                if (_hitInfo.transform.tag == "Player")
-                {
-                    _enemy.SetTarget(_hitInfo.transform);
-                    _enemy.SetAim(false);
-                    _isAiming = false;
-                }
+                _enemy.SetTarget(_hitInfo.transform);
+                _enemy.PlayerSpotted(true);
             }
         }
     }
